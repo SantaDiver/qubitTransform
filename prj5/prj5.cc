@@ -82,8 +82,8 @@ void countDoubleCubit(vector<complexd>& a, vector<complexd>& b, uint sizeOfProce
         vector<complexd> tmp(sizeOfProcessPart);
 
         MPI_Sendrecv (
-            a.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap^rank, 0,
-            tmp.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap^rank, 0,
+            a.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap^rank, 0,
+            tmp.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap^rank, 0,
             MPI_COMM_WORLD, MPI_STATUS_IGNORE
         );
 
@@ -98,7 +98,6 @@ void countDoubleCubit(vector<complexd>& a, vector<complexd>& b, uint sizeOfProce
 
             b[i] = H[ik][0] * a[i00] + H[ik][1] * tmp[i01] +
             H[ik][2] * a[i10] + H[ik][3] * tmp[i11];
-
         }
     } 
     else if (leap2 < sizeOfProcessPart) {
@@ -106,8 +105,8 @@ void countDoubleCubit(vector<complexd>& a, vector<complexd>& b, uint sizeOfProce
         vector<complexd> tmp(sizeOfProcessPart);
 
         MPI_Sendrecv (
-            a.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap^rank, 0,
-            tmp.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap^rank, 0, 
+            a.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap^rank, 0,
+            tmp.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap^rank, 0, 
             MPI_COMM_WORLD, MPI_STATUS_IGNORE
         );
 
@@ -122,6 +121,7 @@ void countDoubleCubit(vector<complexd>& a, vector<complexd>& b, uint sizeOfProce
 
             b[i] = H[ik][0] * a[i00] + H[ik][1] * a[i01] +
             H[ik][2] * tmp[i10] + H[ik][3] * tmp[i11];
+            
         }
     } 
     else {
@@ -130,20 +130,20 @@ void countDoubleCubit(vector<complexd>& a, vector<complexd>& b, uint sizeOfProce
         vector<complexd> tmp1(sizeOfProcessPart),tmp2(sizeOfProcessPart),tmp3(sizeOfProcessPart);
 
         MPI_Sendrecv (
-            a.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap1^rank, 0,
-            tmp1.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap1^rank, 0, 
+            a.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap1^rank, 0,
+            tmp1.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap1^rank, 0, 
             MPI_COMM_WORLD, MPI_STATUS_IGNORE
         );
 
         MPI_Sendrecv (
-            a.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap2^rank, 0,
-            tmp2.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap2^rank, 0,
+            a.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap2^rank, 0,
+            tmp2.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap2^rank, 0,
             MPI_COMM_WORLD, MPI_STATUS_IGNORE
         );
 
         MPI_Sendrecv (
-            a.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap1^procLeap2^rank, 0,
-            tmp3.data(), sizeOfProcessPart, MPI::COMPLEX, procLeap1^procLeap2^rank, 0,
+            a.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap1^procLeap2^rank, 0,
+            tmp3.data(), sizeOfProcessPart, MPI_DOUBLE_COMPLEX, procLeap1^procLeap2^rank, 0,
             MPI_COMM_WORLD, MPI_STATUS_IGNORE
         );
 
@@ -158,7 +158,6 @@ void countDoubleCubit(vector<complexd>& a, vector<complexd>& b, uint sizeOfProce
             
             b[i] = H[ik][0] * a[i00] + H[ik][1] * tmp2[i01] +
             H[ik][2] * tmp1[i10] + H[ik][3] * tmp3[i11];
-
         }
     }
 }
@@ -178,8 +177,8 @@ void countCubit(vector <complexd> &vec, vector <complexd> &res, int k, uint n, c
     else {
         vector<complexd> tmp(block_size);
         MPI_Sendrecv(
-            vec.data(), block_size, MPI::COMPLEX, rank ^ block_shift, 0, tmp.data(),
-            block_size, MPI::COMPLEX, rank ^ block_shift, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE
+            vec.data(), block_size, MPI_DOUBLE_COMPLEX, rank ^ block_shift, 0, tmp.data(),
+            block_size, MPI_DOUBLE_COMPLEX, rank ^ block_shift, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE
         );
 
         #pragma omp parallel for num_threads(glNumberOfThreads)
@@ -276,8 +275,8 @@ int main(int argc, char** argv)
         
         H = cmatrix(4, vector<complexd> (4, 0));
         H[0][0] = 1;
-        H[1][2] = 1;
         H[2][1] = 1;
+        H[1][2] = 1;
         H[3][3] = 1;
     
         for(uint i=1; i<n/2; ++i) {
